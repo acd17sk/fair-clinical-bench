@@ -45,3 +45,4 @@ MIT.
 
 This repository is being built as a demonstration of **Epic Mode** — an autonomous coupling-aware execution layer for [opencode-swarm](https://github.com/zaxbysauce/opencode-swarm). Epic Mode decides per phase whether tasks can be safely parallelized, calibrates against observed scope discipline, and persists per-phase decisions to `.swarm/evidence/epic-promotions.jsonl`. See `docs/epic-mode-tracking.md` for the live log of decisions Epic made during the build.
 
+
