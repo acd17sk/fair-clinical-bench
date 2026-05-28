@@ -37,6 +37,106 @@ pip install -e .
 fair-bench run --dataset pima --output reports/pima.md
 ```
 
+## Data module
+
+The `fair_clinical_bench.data` package provides a unified interface for loading clinical datasets, managing fairness-relevant group columns, and creating reproducible train/val/test splits.
+
+### ClinicalDataset
+
+All datasets are returned as a `ClinicalDataset` dataclass:
+
+```python
+from fair_clinical_bench.data import ClinicalDataset
+
+ds: ClinicalDataset  # returned by any loader
+
+ds.X          # pd.DataFrame — feature matrix
+ds.y          # pd.Series     — target variable
+ds.group_cols # list[str]     — protected / demographic group columns in X
+ds.name       # str           — short dataset identifier
+ds.description  # str | None  — longer description
+
+# Convenience properties
+ds.features   # alias for ds.X
+ds.target     # alias for ds.y
+ds.groups     # ds.X[ds.group_cols] or None if no groups defined
+```
+
+`ClinicalDataset` validates on construction: it checks that `X` and `y` have matching row counts, that `group_cols` contains no duplicates, and that every group column exists in `X`.
+
+### Built-in datasets
+
+Three datasets ship with the package. Each loader downloads the canonical UCI version on first call and caches it under `~/.fair-clinical-bench/datasets/`. If the download fails (e.g. offline), a minimal synthetic dataset (50 rows) is generated so demos and tests do not break.
+
+```python
+from fair_clinical_bench.data import load_pima, load_heart, load_diabetes130, list_builtin_datasets
+
+# List available built-in datasets
+print(list_builtin_datasets())  # ['pima', 'heart', 'diabetes130']
+
+# Load a built-in dataset
+pima = load_pima()
+print(pima.name)         # 'pima'
+print(pima.group_cols)   # ['Age']
+print(pima.X.shape)      # (768, 8)  (or 50 rows if synthetic fallback)
+
+heart = load_heart()
+print(heart.group_cols)  # ['sex']
+
+diabetes130 = load_diabetes130()
+print(diabetes130.group_cols)  # ['race', 'gender', 'age']
+```
+
+Each loader handles dataset-specific preprocessing:
+- **Pima**: treats zeros in biologically-impossible columns (Glucose, BloodPressure, etc.) as missing and imputes with the median.
+- **Heart Disease**: parses `'?'` sentinel values and coerces all columns to numeric.
+- **Diabetes 130-Hospitals**: drops columns with >50% missing values, normalises `'?'` and `'Unknown/Invalid'` sentinels, and imputes the remainder.
+
+### Bring-your-own CSV
+
+Load any CSV file as a `ClinicalDataset` with `load_csv`:
+
+```python
+from fair_clinical_bench.data import load_csv
+
+ds = load_csv(
+    path="data/my_cohort.csv",
+    target_col="readmission_30d",
+    group_cols=["race", "gender"],
+    encoding="utf-8",  # default
+)
+```
+
+`load_csv` validates that the target column exists and is not also listed as a group column. Missing group columns are warned about and silently dropped. Missing feature values are imputed (median for numeric, mode for categorical).
+
+### Stratified splits
+
+Create reproducible train/val/test splits with optional group-aware stratification:
+
+```python
+from fair_clinical_bench.data import load_pima, stratified_split
+
+pima = load_pima()
+splits = stratified_split(
+    X=pima.X,
+    y=pima.y,
+    group_col="Age",        # optional — stratify by group + target
+    train_frac=0.6,
+    val_frac=0.2,
+    test_frac=0.2,
+    random_seed=42,
+)
+
+X_train = pima.X.iloc[splits.train]
+y_train = pima.y.iloc[splits.train]
+```
+
+The split function:
+- Validates that fractions sum to 1.0 (within tolerance).
+- Falls back to target-only stratification if group+target combinations are too sparse (< 2 samples).
+- Warns when only one unique group value is present.
+- Uses a fixed `random_seed` for full reproducibility.
+
 ## License
 
 MIT.
