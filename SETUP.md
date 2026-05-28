@@ -57,3 +57,4 @@ Files to watch on disk:
 | `.swarm/epic/calibration.json` | Current learned threshold + hot modules |
 
 Append to `docs/epic-mode-tracking.md` after each phase to keep the public log in sync.
+
