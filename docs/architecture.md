@@ -71,3 +71,4 @@ Each phase has 3–5 independent tasks → Epic Mode should promote nearly every
 Every module in `models/`, `metrics/`, and `explain/` MUST be self-contained — no module under those directories may import another sibling at runtime. Cross-module composition happens only in `report/renderer.py` and `cli.py`. This is what keeps Epic Mode's `p` low.
 
 
+
