@@ -1,0 +1,95 @@
+{
+  "agents": {
+    "architect": {
+      "model": "opencode/kimi-k2.6",
+      "fallback_models": ["opencode/qwen3.6-plus", "opencode/gpt-5-nano"]
+    },
+    "coder": {
+      "model": "opencode/kimi-k2.6",
+      "fallback_models": ["opencode/qwen3.6-plus", "opencode/gpt-5-nano"]
+    },
+    "reviewer": {
+      "model": "opencode/qwen3.6-plus",
+      "fallback_models": ["opencode/kimi-k2.6", "opencode/gpt-5-nano"]
+    },
+    "test_engineer": {
+      "model": "opencode/qwen3.6-plus",
+      "fallback_models": ["opencode/kimi-k2.6", "opencode/gpt-5-nano"],
+      "permissions": [
+        { "permission": "read", "action": "allow", "pattern": "*" },
+        { "permission": "edit", "action": "allow", "pattern": "*" },
+        { "permission": "bash", "action": "allow", "pattern": "*" }
+      ]
+    },
+    "explorer": {
+      "model": "opencode/qwen3.6-plus",
+      "fallback_models": ["opencode/kimi-k2.6", "opencode/gpt-5-nano"]
+    },
+    "sme": {
+      "model": "opencode/kimi-k2.6",
+      "fallback_models": ["opencode/qwen3.6-plus", "opencode/gpt-5-nano"]
+    },
+    "critic": {
+      "model": "opencode/qwen3.6-plus",
+      "fallback_models": ["opencode/kimi-k2.6", "opencode/gpt-5-nano"]
+    },
+    "docs": {
+      "model": "opencode/qwen3.6-plus",
+      "fallback_models": ["opencode/kimi-k2.6", "opencode/gpt-5-nano"]
+    },
+    "critic_sounding_board": {
+      "model": "opencode/qwen3.6-plus",
+      "fallback_models": ["opencode/kimi-k2.6", "opencode/gpt-5-nano"]
+    },
+    "critic_drift_verifier": {
+      "model": "opencode/qwen3.6-plus",
+      "fallback_models": ["opencode/kimi-k2.6", "opencode/gpt-5-nano"]
+    },
+    "critic_hallucination_verifier": {
+      "model": "opencode/qwen3.6-plus",
+      "fallback_models": ["opencode/kimi-k2.6", "opencode/gpt-5-nano"]
+    },
+    "critic_oversight": {
+      "model": "opencode/kimi-k2.6",
+      "fallback_models": ["opencode/qwen3.6-plus", "opencode/gpt-5-nano"]
+    },
+    "curator_init": {
+      "model": "opencode/qwen3.6-plus",
+      "fallback_models": ["opencode/gpt-5-nano"]
+    },
+    "curator_phase": {
+      "model": "opencode/qwen3.6-plus",
+      "fallback_models": ["opencode/kimi-k2.6", "opencode/gpt-5-nano"]
+    }
+  },
+  "council": {
+    "enabled": true
+  },
+  "max_iterations": 8,
+  "turbo": {
+    "strategy": "lean",
+    "lean": {
+      "max_parallel_coders": 4,
+      "conflict_policy": "serialize"
+    },
+    "epic": {
+      "mode": {
+        "enabled": true,
+        "activation_threshold": 0.3,
+        "min_commits_for_signal": 5
+      },
+      "cochange": {
+        "enabled": true,
+        "threshold": 0.6,
+        "min_co_changes": 3
+      },
+      "calibration": {
+        "enabled": true,
+        "floor_threshold": 0.05,
+        "tighten_step": 0.02,
+        "loosen_step": 0.01,
+        "loosen_window": 5
+      }
+    }
+  }
+}
