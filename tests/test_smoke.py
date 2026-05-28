@@ -13,3 +13,4 @@ def test_stub_cli_exits_zero() -> None:
     assert cli.main([]) == 0
     assert cli.main(["--dataset", "pima"]) == 0
 
+
