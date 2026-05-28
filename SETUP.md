@@ -4,10 +4,20 @@
 
 ```bash
 cd ~/Documents/epic-project-test/fair-clinical-bench
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-pytest -q                       # smoke test should pass
+
+# Create + activate the conda env (Python 3.11 + numpy/pandas/sklearn/xgboost from conda-forge,
+# SHAP and the package itself via pip — declared inside environment.yml)
+conda env create -f environment.yml
+conda activate fair-clinical-bench
+
+# Smoke test should pass
+pytest -q
+```
+
+If you ever change `pyproject.toml` deps (or `environment.yml`), refresh with:
+
+```bash
+conda env update -f environment.yml --prune
 ```
 
 ## Running the swarm to build the project
@@ -37,15 +47,10 @@ pytest -q                       # smoke test should pass
 
 While the swarm runs:
 
-```bash
-# Most recent decision (durable, cross-session)
-/swarm epic last
-
-# Full calibration state (learned threshold + hot modules + recent divergent tasks)
-/swarm epic calibration
-
-# Read-only what-if against current plan (does not write evidence)
-/swarm epic decide
+```
+/swarm epic last         # most recent decision (durable, cross-session)
+/swarm epic calibration  # learned threshold + hot modules + recent divergent tasks
+/swarm epic decide       # read-only what-if against current plan
 ```
 
 Files to watch on disk:
@@ -57,6 +62,3 @@ Files to watch on disk:
 | `.swarm/epic/calibration.json` | Current learned threshold + hot modules |
 
 Append to `docs/epic-mode-tracking.md` after each phase to keep the public log in sync.
-
-
-
