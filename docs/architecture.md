@@ -15,8 +15,9 @@ fair_clinical_bench/
 │   └── splits.py           # stratified train/val/test
 ├── models/
 │   ├── __init__.py
-│   ├── base.py             # `BenchmarkModel` protocol
-│   ├── logistic.py
+│   ├── protocol.py           # `BenchmarkModel` protocol (fit, predict_proba)
+│   ├── registry.py           # register / get_model / list_models
+│   ├── logistic_regression.py
 │   ├── random_forest.py
 │   ├── xgboost.py
 │   └── calibrated_mlp.py
@@ -27,8 +28,8 @@ fair_clinical_bench/
 │   └── fairness.py         # demographic parity, equalized odds, calibration-by-group
 ├── explain/
 │   ├── __init__.py
-│   ├── shap_local.py       # per-prediction explanations
-│   └── shap_global.py      # feature importance / summary plots
+│   ├── local.py            # SHAP local explanations (top-K highest-risk)
+│   └── global_.py          # SHAP global feature importance (mean |SHAP|)
 └── report/
     ├── __init__.py
     ├── renderer.py         # Markdown report assembly
